@@ -7,6 +7,7 @@ use tokio::sync::mpsc;
 
 use std::collections::HashMap;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use tokio::time::sleep;
 
 #[derive(Debug, Clone)]
 pub struct Client {
@@ -181,7 +182,7 @@ fn spawn_consume_buffer_task(mut buffer_receiver: mpsc::Receiver<Trace>, client:
                     buffer.push(trace);
                 }
                 Err(_) => {
-                    tokio::time::delay_for(client.buffer_flush_max_interval).await;
+                    sleep(client.buffer_flush_max_interval).await;
                 }
             }
 
