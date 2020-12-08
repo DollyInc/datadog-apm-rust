@@ -11,7 +11,7 @@ documentation = "https://docs.rs/datadog-apm"
 repository = "https://github.com/pipefy/datadog-apm-rust"
 
 [dependencies]
-hyper = "0.13"
+hyper = "0.13.9"
 rmp-serde = "0.14.2"
 rmp = "0.8"
 log = "0.4"
