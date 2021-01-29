@@ -5,6 +5,7 @@ use rmp::encode;
 use serde::Serialize;
 use tokio::sync::mpsc;
 
+
 use std::collections::HashMap;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use tokio::time::sleep;
@@ -73,7 +74,7 @@ impl Client {
         client
     }
 
-    pub fn send_trace(mut self, trace: Trace) {
+    pub fn send_trace(self, trace: Trace) {
         match self.buffer_sender.try_send(trace) {
             Ok(_) => trace!("trace enqueued"),
             Err(err) => warn!("could not enqueue trace: {:?}", err),
@@ -177,11 +178,11 @@ fn spawn_consume_buffer_task(mut buffer_receiver: mpsc::Receiver<Trace>, client:
         loop {
             let client = client.clone();
 
-            match buffer_receiver.try_recv() {
-                Ok(trace) => {
+            match buffer_receiver.recv().await {
+                Some(trace) => {
                     buffer.push(trace);
                 }
-                Err(_) => {
+                None => {
                     sleep(client.buffer_flush_max_interval).await;
                 }
             }
